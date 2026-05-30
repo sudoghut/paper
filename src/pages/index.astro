@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const papers = await getCollection('papers');
+papers.sort((a, b) => b.data.reviewDate.localeCompare(a.data.reviewDate));
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="论文综述">
+  <p class="page-heading">共 {papers.length} 篇综述 · 按综述日期倒序排列</p>
+
+  <ul class="paper-list">
+    {papers.map(paper => (
+      <li class="paper-item">
+        <h2 class="paper-item-title">
+          <a href={`${base}/papers/${paper.slug}`}>{paper.data.title}</a>
+        </h2>
+        <p class="paper-item-original">{paper.data.originalTitle}</p>
+        {paper.data.description && (
+          <p class="paper-item-desc">{paper.data.description}</p>
+        )}
+        <div class="paper-item-meta">
+          {paper.data.institution && (
+            <span>{paper.data.institution}</span>
+          )}
+          {paper.data.institution && <span class="meta-sep">·</span>}
+          <span>{paper.data.reviewDate}</span>
+          {paper.data.hfVotes !== undefined && (
+            <>
+              <span class="meta-sep">·</span>
+              <span class="badge-votes">🔺 {paper.data.hfVotes}</span>
+            </>
+          )}
+          {paper.data.tags && paper.data.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

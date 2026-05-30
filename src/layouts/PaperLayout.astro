@@ -1,0 +1,61 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  paper: CollectionEntry<'papers'>;
+}
+const { paper } = Astro.props;
+const { title, originalTitle, originalUrl, authors, institution, hfVotes, publishDate, reviewDate, tags, description } = paper.data;
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={title} description={description}>
+  <a href={base || '/'} class="back-link">← 返回列表</a>
+
+  <article>
+    <header class="paper-header">
+      <h1 class="paper-title">{title}</h1>
+      <p class="paper-original-title">{originalTitle}</p>
+
+      <div class="paper-meta-table">
+        <span class="meta-key">原文作者</span>
+        <span class="meta-val">{authors}</span>
+
+        {institution && (
+          <>
+            <span class="meta-key">机构</span>
+            <span class="meta-val">{institution}</span>
+          </>
+        )}
+
+        <span class="meta-key">论文发布</span>
+        <span class="meta-val">{publishDate}</span>
+
+        <span class="meta-key">综述日期</span>
+        <span class="meta-val">{reviewDate}</span>
+
+        {hfVotes !== undefined && (
+          <>
+            <span class="meta-key">HF 票数</span>
+            <span class="meta-val">🔺 {hfVotes}</span>
+          </>
+        )}
+      </div>
+
+      {tags && tags.length > 0 && (
+        <div class="paper-tags">
+          {tags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+
+      <a href={originalUrl} target="_blank" rel="noopener noreferrer" class="paper-original-link">
+        📄 查看原文 →
+      </a>
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
