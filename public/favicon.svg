@@ -1,4 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#1a5276"/>
-  <text x="16" y="22" text-anchor="middle" font-size="18" font-family="serif" fill="white">论</text>
+  <rect width="32" height="32" rx="6" fill="#0f172a"/>
+
+  <!-- Document outline, portrait with dog-ear -->
+  <path d="M 6,4 H 20 L 25,9 V 28 H 6 Z"
+        fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Fold crease — secondary, very faint -->
+  <polyline points="20,4 20,9 25,9"
+            fill="none" stroke="white" stroke-width="1" stroke-linejoin="round" opacity="0.3"/>
+
+  <!-- Selection corner brackets — the dominant mark -->
+  <!-- Top-left -->
+  <polyline points="18,11 10,11 10,19"
+            fill="none" stroke="white" stroke-width="2.1"
+            stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Bottom-right -->
+  <polyline points="14,23 22,23 22,15"
+            fill="none" stroke="white" stroke-width="2.1"
+            stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
