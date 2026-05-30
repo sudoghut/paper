@@ -7,14 +7,14 @@ papers.sort((a, b) => b.data.reviewDate.localeCompare(a.data.reviewDate));
 const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title="Huggingface paper 论文综述">
+<BaseLayout title="首页">
   <p class="page-heading">共 {papers.length} 篇综述 · 按综述日期倒序排列</p>
 
   <ul class="paper-list">
     {papers.map(paper => (
       <li class="paper-item">
         <h2 class="paper-item-title">
-          <a href={`${base}/papers/${paper.slug}`}>{paper.data.title}</a>
+          <a href={`${base}papers/${paper.slug}`}>{paper.data.title}</a>
         </h2>
         <p class="paper-item-original">{paper.data.originalTitle}</p>
         {paper.data.description && (
