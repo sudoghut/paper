@@ -14,7 +14,7 @@ const base = import.meta.env.BASE_URL;
     {papers.map(paper => (
       <li class="paper-item">
         <h2 class="paper-item-title">
-          <a href={`${base}papers/${paper.slug}`}>{paper.data.title}</a>
+          <a href={`${base}papers/${paper.id}`}>{paper.data.title}</a>
         </h2>
         <p class="paper-item-original">{paper.data.originalTitle}</p>
         {paper.data.description && (
