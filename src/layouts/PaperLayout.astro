@@ -65,12 +65,15 @@ const base = import.meta.env.BASE_URL;
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: false, theme: 'base' });
 
-  // Astro renders ```mermaid blocks as <pre><code class="language-mermaid">
-  // We need to transform them to <pre class="mermaid"> for the client library
-  document.querySelectorAll('pre > code.language-mermaid').forEach(code => {
-    const pre = code.parentElement;
-    pre.className = 'mermaid';
-    pre.textContent = code.textContent;
+  // Astro syntax-highlights code blocks and renders them as:
+  // <pre class="astro-code ..." data-language="mermaid"><code><span>...</span></code></pre>
+  // We extract raw text, strip the styled pre, and replace with a plain div.mermaid
+  document.querySelectorAll('pre[data-language="mermaid"]').forEach(pre => {
+    const rawText = pre.textContent;
+    const div = document.createElement('div');
+    div.className = 'mermaid';
+    div.textContent = rawText;
+    pre.replaceWith(div);
   });
 
   await mermaid.run({ querySelector: '.mermaid' });
