@@ -61,65 +61,76 @@ const base = import.meta.env.BASE_URL;
   </article>
 </BaseLayout>
 
-<script is:inline src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<script is:inline src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+<link is:inline rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markmap-view@0.17/dist/browser/index.css" />
+<script is:inline src="https://cdn.jsdelivr.net/npm/markmap-lib@0.17/dist/browser/index.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/markmap-view@0.17/dist/browser/index.js"></script>
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function () {
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: 'base',
-      themeVariables: {
-        fontSize: '15px',
-        primaryColor: '#dbeafe',
-        primaryTextColor: '#1e293b',
-        primaryBorderColor: '#3b82f6',
-        lineColor: '#64748b',
-        secondaryColor: '#f0fdf4',
-        tertiaryColor: '#fef9c3',
-      },
-    });
+    var transformer = new markmap.Transformer();
 
-    // Astro syntax-highlights mermaid blocks as:
-    // <pre class="astro-code" data-language="mermaid"><code><span>…</span></code></pre>
-    // Replace with a wrapper + inner div so Mermaid renders, then we apply pan-zoom.
     document.querySelectorAll('pre[data-language="mermaid"]').forEach(function (pre) {
+      // Convert Mermaid indented mindmap syntax → Markdown headings for markmap
+      var md = mermaidToMarkdown(pre.textContent.trim());
+      var result = transformer.transform(md);
+
       var wrapper = document.createElement('div');
-      wrapper.className = 'mermaid-wrapper';
+      wrapper.className = 'markmap-wrapper';
 
       var hint = document.createElement('p');
-      hint.className = 'mermaid-hint';
-      hint.textContent = '滚轮缩放 · 拖拽平移 · 双击复位';
+      hint.className = 'markmap-hint';
+      hint.textContent = '滚轮缩放 · 拖拽平移 · 点击节点折叠 / 展开';
       wrapper.appendChild(hint);
 
-      var inner = document.createElement('div');
-      inner.className = 'mermaid';
-      inner.textContent = pre.textContent.trim();
-      wrapper.appendChild(inner);
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.style.width = '100%';
+      svg.style.height = '680px';
+      wrapper.appendChild(svg);
 
       pre.replaceWith(wrapper);
+
+      var mm = markmap.Markmap.create(svg, {
+        colorFreezeLevel: 2,   // each top-level branch → its own color, all descendants inherit it
+        duration: 350,
+        maxWidth: 380,
+        spacingHorizontal: 72,
+        spacingVertical: 4,
+        paddingX: 16,
+        zoom: true,
+        pan: true,
+      }, result.root);
+
+      // Slight delay so the SVG is laid out before fit()
+      setTimeout(function () { mm.fit(); }, 50);
     });
 
-    mermaid.run({ querySelector: '.mermaid' }).then(function () {
-      document.querySelectorAll('.mermaid svg').forEach(function (svg) {
-        // Make SVG fill the container
-        svg.setAttribute('width', '100%');
-        svg.setAttribute('height', '100%');
-        svg.style.width = '100%';
-        svg.style.height = '100%';
-
-        svgPanZoom(svg, {
-          zoomEnabled: true,
-          controlIconsEnabled: true,
-          fit: true,
-          center: true,
-          minZoom: 0.05,
-          maxZoom: 20,
-          zoomScaleSensitivity: 0.3,
-          dblClickZoomEnabled: false,
-          mouseWheelZoomEnabled: true,
-          preventMouseEventsDefault: true,
-        });
+    function mermaidToMarkdown(text) {
+      var lines = text.split('\n').filter(function (l) {
+        return l.trim() && l.trim() !== 'mindmap';
       });
-    });
+      var md = '';
+      var indentStack = [];
+
+      lines.forEach(function (line) {
+        var indent = line.search(/\S/);
+        if (indent < 0) return;
+        while (indentStack.length && indentStack[indentStack.length - 1] >= indent) {
+          indentStack.pop();
+        }
+        var depth = indentStack.length;
+        indentStack.push(indent);
+
+        // Strip Mermaid shape markers: root((x)), ((x)), (x), [x], {{x}}
+        var name = line.trim()
+          .replace(/^root\(\((.+)\)\)\s*$/, '$1')
+          .replace(/^\(\((.+)\)\)\s*$/, '$1')
+          .replace(/^\((.+)\)\s*$/, '$1')
+          .replace(/^\[(.+)\]\s*$/, '$1')
+          .replace(/^\{\{(.+)\}\}\s*$/, '$1');
+
+        md += '#'.repeat(Math.min(depth + 1, 6)) + ' ' + name + '\n';
+      });
+
+      return md;
+    }
   });
 </script>

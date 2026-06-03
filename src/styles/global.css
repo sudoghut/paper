@@ -422,37 +422,33 @@ main {
   color: var(--color-link);
 }
 
-/* ===== Mermaid Mind Map ===== */
-.mermaid-wrapper {
-  /* Full-bleed: break out of the 740px max-width */
+/* ===== Markmap Mind Map ===== */
+.markmap-wrapper {
+  /* Full-bleed: break out of the 740px prose max-width */
   width: 100vw;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   margin: 2.5rem 0;
-  background: #f8faff;
-  border-top: 2px solid #bfdbfe;
-  border-bottom: 2px solid #bfdbfe;
+  background: #fafbfc;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.mermaid-hint {
+.markmap-hint {
   text-align: center;
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #94a3b8;
-  padding: 0.5rem 0 0;
-  letter-spacing: 0.05em;
+  padding: 0.6rem 0 0;
+  letter-spacing: 0.08em;
+  user-select: none;
 }
 
-.mermaid {
-  width: 100%;
-  height: 680px;
-  overflow: hidden;
-}
-
-.mermaid svg {
-  width: 100% !important;
-  height: 100% !important;
+/* Override markmap's default node font to match site */
+.markmap-node text {
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
 }
 
 /* ===== Responsive ===== */
