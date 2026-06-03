@@ -120,24 +120,21 @@ mindmap
         每个数据集采样300个问题
     三阶段无训练Pipeline
       Stage1 Source Selection
-        形式化 S = LLM_select(q, cb for b in B; k) ⊆ B
-        输入 问题q + 所有309个知识库结构描述cb
-        cb内容 表结构 图谱本体 语料主题
-        LLM零样本打分 返回Top-k候选集合S
+        Eq.2.1 输入问题q与全部309个知识库描述cb
+        cb含表结构 图谱本体 语料主题
+        LLM零样本打分返回Top-k候选集合S
         消融 k=3效果最优 k=10反而下降至62.8%
       Stage2 Query Formulation
-        形式化 q_b = LLM applied to T_b(q, cb) for each b in S
-        T_b为per-source提示模板
+        Eq.2.2 对每个候选库b用per-source模板T_b生成查询
         SQL 针对Spider 206库 BIRD 80库
         SPARQL 针对Wikidata 实体链接遵循ToG流程
         Cypher 针对Text2Cypher 15个Neo4j图
         HyDE假设性文段改写 针对7个BEIR文档库
       Stage3 Cross-Source Evidence Selection
-        形式化 E = Select(q, Exec(b, q_b) for b in S)
-        汇总各来源Executor执行结果
+        Eq.2.3 汇总各来源Executor执行结果
         LLM重排序筛选最终跨源证据集E
-        多候选情况下准确率 67.91%到75.29%
-        比随机基线高出26到34个百分点
+        多候选情况下准确率 67.91%至75.29%
+        比随机基线高出26至34个百分点
     数据集与评估指标
       Document Search 7个BEIR数据集
         NFCorpus SciFact FiQA
