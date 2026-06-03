@@ -109,3 +109,91 @@ TinyLlama-NoPE（完全没有位置编码的模型）同样学会了位置偏差
 - 实验规模扎实（8个不同架构 × 4种配置），结论有说服力
 - 解法极简（均衡数据配比），工程实施成本极低，有较强的实用价值
 - 局限性：实验数据仅用英文维基百科，训练规模相对有限，未在真实 RAG 系统上做端到端验证
+
+## 七、思维导图
+
+```mermaid
+mindmap
+  root((密集检索位置偏差))
+    研究问题
+      位置偏差的定义
+        相关信息在文档后部时检索性能下降
+        PSI Position Sensitivity Index 衡量偏差程度
+        余弦相似度峰值位置随训练数据偏移
+      两个竞争假说
+        假说A 结构天生决定 因果注意力/位置编码导致
+        假说B 训练数据决定 数据分布决定偏差方向
+      核心发现
+        全部8个模型偏差方向均跟随训练数据
+        数据是主导因素 架构贡献极小
+    位置控制数据集构建
+      来源 英文Wikipedia文章三等分
+        M_B开头组 答案只在第一段 100:0:0
+        M_M中间组 答案只在中间段 0:100:0
+        M_E结尾组 答案只在末段 0:0:100
+        M_U均匀组 三段各占1/3 33:33:33
+      问题生成 GPT-4o-mini针对目标段生成查询
+      三裁判质量过滤
+        过滤器1 bge-reranker-v2-m3
+        过滤器2 gte-multilingual-reranker-base
+        过滤器3 jina-reranker-v2-base-multilingual
+        要求全票通过 目标段得分比其他段高出阈值δ=0.3
+        295万候选 → 48万高质量样本保留
+    32组对照实验
+      编码器架构 4个
+        BERT-base APE位置编码
+        ModernBERT-base RoPE位置编码
+        ModernBERT-large RoPE位置编码
+        Longformer-base ALiBi位置编码 长文档
+      解码器架构 4个
+        GPT-2-medium APE位置编码
+        BLOOM-560M ALiBi位置编码
+        TinyLlama-NoPE 完全无位置编码 关键对照组
+        Qwen3-0.6B RoPE位置编码
+      Pooling策略消融
+        CLS pooling
+        Mean pooling
+        Last-token pooling
+        结论 偏差方向与pooling策略无关
+    PSI实验结果
+      GPT-2-medium
+        开头偏斜训练 PSI=0.592
+        均匀训练 PSI=0.080
+        降低幅度 86.5%
+      Qwen3-0.6B
+        最偏斜配置 PSI=0.409
+        均匀训练 PSI=0.068
+        降低幅度 83%
+      ModernBERT-base 长文档
+        最偏斜配置 PSI=0.476
+        均匀训练 PSI=0.108
+        降低幅度 77%
+      整体范围 均匀训练降低57%至87%
+      均匀训练同时维持检索准确率不下降
+    关键对照实验发现
+      TinyLlama-NoPE 无位置编码仍学到偏差
+        证明位置编码不是偏差的必要条件
+        数据才是更根本原因
+      ModernBERT峰值位移
+        开头训练 相似度峰值在position 1
+        结尾训练 相似度峰值移至position 9
+      标准评测集本身有偏差
+        HotpotQA FEVER答案集中在文档开头
+        导致开头偏好模型在这些集上得分虚高
+        现有排行榜存在系统性偏差
+    评估基准
+      SQuAD-PosQ
+      FineWeb-PosQ
+      PosIR 论文提出的位置感知基准
+    计算资源
+      数据生成 GPT-4o-mini API
+      向量检索 BGE-M3
+      训练硬件 8块NVIDIA A100-SXM4-80GB
+      每组约4万条训练样本
+      32组实验总计约6小时 合计约48 GPU小时
+    实践意义
+      解法极简 均衡训练数据位置分布
+      无需改变模型架构 工程实施成本极低
+      已识别MS-MARCO Natural Questions存在类似偏差
+      局限 仅用英文维基百科 未在真实RAG系统端到端验证
+```
