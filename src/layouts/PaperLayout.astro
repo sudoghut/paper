@@ -62,20 +62,64 @@ const base = import.meta.env.BASE_URL;
 </BaseLayout>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function () {
-    mermaid.initialize({ startOnLoad: false, theme: 'base' });
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        fontSize: '15px',
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e293b',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#64748b',
+        secondaryColor: '#f0fdf4',
+        tertiaryColor: '#fef9c3',
+      },
+    });
 
     // Astro syntax-highlights mermaid blocks as:
     // <pre class="astro-code" data-language="mermaid"><code><span>…</span></code></pre>
-    // Replace each with a plain <div class="mermaid"> so the library can render it.
+    // Replace with a wrapper + inner div so Mermaid renders, then we apply pan-zoom.
     document.querySelectorAll('pre[data-language="mermaid"]').forEach(function (pre) {
-      var div = document.createElement('div');
-      div.className = 'mermaid';
-      div.textContent = pre.textContent.trim();
-      pre.replaceWith(div);
+      var wrapper = document.createElement('div');
+      wrapper.className = 'mermaid-wrapper';
+
+      var hint = document.createElement('p');
+      hint.className = 'mermaid-hint';
+      hint.textContent = '滚轮缩放 · 拖拽平移 · 双击复位';
+      wrapper.appendChild(hint);
+
+      var inner = document.createElement('div');
+      inner.className = 'mermaid';
+      inner.textContent = pre.textContent.trim();
+      wrapper.appendChild(inner);
+
+      pre.replaceWith(wrapper);
     });
 
-    mermaid.run({ querySelector: '.mermaid' });
+    mermaid.run({ querySelector: '.mermaid' }).then(function () {
+      document.querySelectorAll('.mermaid svg').forEach(function (svg) {
+        // Make SVG fill the container
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+
+        svgPanZoom(svg, {
+          zoomEnabled: true,
+          controlIconsEnabled: true,
+          fit: true,
+          center: true,
+          minZoom: 0.05,
+          maxZoom: 20,
+          zoomScaleSensitivity: 0.3,
+          dblClickZoomEnabled: false,
+          mouseWheelZoomEnabled: true,
+          preventMouseEventsDefault: true,
+        });
+      });
+    });
   });
 </script>
