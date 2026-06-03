@@ -99,3 +99,96 @@ description: "让 AI 像全能图书馆员一样，用 SQL、SPARQL、Cypher 等
 发布于 2026 年 5 月 28 日，发布时间极新，目前网络上几乎没有公开的深度讨论或第三方评价。
 
 从学术定位来看，这是一个具有较强**系统创新性**的工作——它并非提出新模型，而是构建了一个新的"框架范式"（直接使用原生查询语言而非统一表示），解决了现有方法的根本性局限。论文目前挂在 arXiv 预印本，投稿状态暂无公开信息。
+
+## 七、思维导图
+
+```mermaid
+mindmap
+  root((OmniRetrieval))
+    研究问题与背景
+      异构知识源的四大范式
+        Document Search 密集向量检索 BEIR基准
+        Text-to-SQL 关系数据库 Spider BIRD
+        Text-to-SPARQL RDF图谱 Wikidata
+        Text-to-Cypher 属性图 Neo4j
+      传统方法的根本局限
+        统一表示转换损失结构语义
+        KB Routing只选单一来源 错过跨源互补
+        单一范式模型无法泛化至其他范式
+      规模挑战
+        13个数据集 309个知识库
+        每个数据集采样300个问题
+    三阶段无训练Pipeline
+      Stage1 Source Selection
+        形式化 S = LLM_select(q, cb for b in B; k) ⊆ B
+        输入 问题q + 所有309个知识库结构描述cb
+        cb内容 表结构 图谱本体 语料主题
+        LLM零样本打分 返回Top-k候选集合S
+        消融 k=3效果最优 k=10反而下降至62.8%
+      Stage2 Query Formulation
+        形式化 q_b = LLM applied to T_b(q, cb) for each b in S
+        T_b为per-source提示模板
+        SQL 针对Spider 206库 BIRD 80库
+        SPARQL 针对Wikidata 实体链接遵循ToG流程
+        Cypher 针对Text2Cypher 15个Neo4j图
+        HyDE假设性文段改写 针对7个BEIR文档库
+      Stage3 Cross-Source Evidence Selection
+        形式化 E = Select(q, Exec(b, q_b) for b in S)
+        汇总各来源Executor执行结果
+        LLM重排序筛选最终跨源证据集E
+        多候选情况下准确率 67.91%到75.29%
+        比随机基线高出26到34个百分点
+    数据集与评估指标
+      Document Search 7个BEIR数据集
+        NFCorpus SciFact FiQA
+        MS MARCO FEVER NaturalQuestions HotpotQA
+      Text-to-SQL 2个数据集
+        Spider 206个数据库
+        BIRD 80个数据库
+      Text-to-SPARQL 3个数据集
+        SimpleQuestions QALD-10 LC-QuAD-2.0
+      Text-to-Cypher 1个数据集
+        Text2Cypher 15个Neo4j图
+      评估指标
+        Source Selection Accuracy 来源选中准确率
+        Retrieval Accuracy NDCG@10用于文档 Execution Match用于结构化
+        LLM-as-a-Judge 评委看问题+预测+金标准 允许语义等价
+    实验结果
+      主要性能指标
+        来源选中准确率 65.71% vs KB Routing 61.65%
+        检索准确率 44.34% vs KB Routing 39.98%
+        LLM评委打分 65.88% vs KB Routing 57.99%
+        理论Oracle上界 检索61.85% 评委74.55%
+      消融 模型规模效应
+        2B参数 Top-1与Top-3无显著差距
+        4B以上 Top-3明显优于Top-1
+        规模越大跨范式候选分布越均匀
+      跨范式覆盖能力
+        Document Search的off-diagonal准确率 28.2%
+        结构化后端的off-diagonal准确率 15.2%到22.1%
+        Wikidata与Wikipedia内容重叠驱动跨范式得分
+    模型与实现细节
+      闭源LLM via API
+        GPT-5.4
+        Gemini-3.1 Pro
+        Claude Sonnet-4.6
+      开源LLM 本地vLLM部署
+        Qwen-3.5 27B
+        Gemma-4 31B
+      文档向量化
+        all-MiniLM-L6-v2 语义嵌入
+      推理超参数
+        Temperature 0.0 确定性输出
+        Maximum tokens 1024
+      硬件 单张NVIDIA H200 用于开源模型
+    局限与未来方向
+      当前局限
+        LLM调用次数随知识库数量线性增长
+        查询生成质量受LLM代码能力制约
+        Stage3排序策略较朴素
+      未来方向
+        端到端可训练查询生成与跨源排序
+        大规模知识库高效分层索引
+        与UniversalRAG结合扩展多模态来源
+        查询执行失败时自动修复重试机制
+```
