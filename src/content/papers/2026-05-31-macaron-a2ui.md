@@ -96,3 +96,72 @@ Mind Lab 的训练框架已整合进 **NVIDIA NeMo Megatron** 和 **字节跳动
 论文于 2026 年 5 月 26 日发布，时间较新，但 Mind Lab 团队（来自 OpenAI、DeepMind、清华、MIT）在此之前的研究已引发广泛关注。X（Twitter）上的 AI 观察者对 Mind Lab 的技术突破（万亿参数 RL 成本降低 90%）评价"令人震惊"。
 
 A2UI 协议本身在开发者社区已有广泛讨论，被列为 2026 年 AI 代理开发的核心标准之一。对于普通用户，这项技术意味着：未来与 AI 聊天时，AI 能在聊天界面里直接弹出表单、日历、选项卡，大幅降低信息输入的麻烦。
+
+## 七、思维导图
+
+```mermaid
+mindmap
+  root((Macaron-A2UI))
+    研究问题
+      纯文字对话的局限
+        复杂信息输入靠文字效率低
+        用户认知负担重
+      现有UI生成方案的问题
+        需要单独系统生成UI 与对话脱节
+        无统一协议 不同模型行为不一致
+    A2UI协议设计
+      统一响应格式
+        text_response 文字回复部分
+        a2ui 列表 UI操作序列
+      四种原子操作
+        beginRendering 初始化UI渲染
+        surfaceUpdate 更新已有UI组件
+        dataModelUpdate 更新数据模型
+        deleteSurface 删除UI组件
+      UI组件类型
+        表单 Form 日历 Calendar 选项卡 Tabs 等
+    两阶段训练流程
+      阶段一 SFT监督微调
+        损失函数 标准交叉熵 对每个token预测
+        数据来源 MultiWOZ Schema-Guided ESConv AnnoMI
+        原始数据14245条转换后样本
+        99.2%渲染成功率 71.7% UI轮次比例
+        超参 lr=1e-4 batch=32 1 epoch max_len=4096
+        LoRA适配 rank=16
+      阶段二 GRPO强化学习
+        优势估计 A_ij = R_ij 减 组内平均奖励
+        组大小G=8
+        超参 lr=3e-5 batch=32 50步 max_len=2200
+    奖励函数三层设计
+      L1协议正确性 权重0.2
+        JSON解析合规 Schema符合 引用完整性
+        必填字段 格式规范
+      L2任务构建质量 权重0.4
+        触发时机恰当 组件与意图对齐
+        文字UI接地 数据模型利用 动作完整性
+      L3体验质量 权重0.4
+        文字优先原则下的价值增益
+        对话自然性 认知负荷
+      全局通过门控 R = pass * L1+L2+L3加权
+    评估框架 A2UI-Bench
+      300个任务 atomic depth width三类
+      文本指标 L1 L2 L3打分
+      视觉指标 V1 V2 V3
+        Flutter渲染 + VLM评委
+        视觉完整性 任务对齐 动作清晰度
+    实验结果
+      Macaron-A2UI-235B 总分75.6
+        超越GPT-5.4的74.1
+      Macaron-A2UI-30B 总分58.8
+      未调优Qwen-235B基线 21.6
+      训练收益分解
+        Qwen-30B基线 19.8
+        SFT后 37.2 L1从无到2.25
+        GRPO后 58.8 L1进一步升至4.11
+      跨领域鲁棒性
+        不同对话领域评分在3.82至3.84之间
+        方差极小
+    规模效益
+      万亿参数模型RL训练成本降低90%
+      Mind Lab团队来自OpenAI DeepMind清华MIT
+```
