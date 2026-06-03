@@ -107,3 +107,69 @@ Xetrieval 由两个核心模块组成：
 2026 年 5 月 28 日发布，目前暂无第三方评测、博客解读或社交媒体热议。
 
 **背景参照：** "用稀疏自动编码器解释密集检索"这一研究方向已有多篇铺垫论文（如 2024 年11月的"Interpret and Control Dense Retrieval with Sparse Latent Features"，EMNLP 2025 的"Decoding Dense Embeddings"），Xetrieval 在此基础上的创新在于**将链式推理（CoT）也纳入了解释体系**，使解释更贴近人类推理过程。
+
+## 七、思维导图
+
+```mermaid
+mindmap
+  root((Xetrieval))
+    研究问题
+      密集检索的黑箱问题
+        高维嵌入隐藏了相关性打分的真实原因
+        表面解释 词汇匹配 事后生成理由 不可信
+      目标 嵌入层的机制性解释
+        找出真正驱动检索决策的潜在语义特征
+        要求特征可因果验证 可干预控制
+    两阶段架构
+      阶段一 Reasoning Internalizer推理内化器
+        目标 用单次前向传播近似CoT推理
+        三个方面专用MLP
+          Summary MLP 提取文档摘要表示
+          Purpose MLP 捕捉查询文档目的对齐
+          QA MLP 生成问答推理轨迹表示
+        MLP结构 单隐藏层 tanh激活 L2归一化
+        输出 推理增强嵌入 维度与原始嵌入相同
+        训练损失 MSE 预测嵌入与目标CoT嵌入的L2距离
+        训练数据 11796条StackExchange文档及LLM生成推理文本
+        效果 恢复CoT推理器50%至70%的性能增益
+      阶段二 Mechanistic Explainer机制解释器
+        核心组件 Sparse Autoencoder稀疏自动编码器
+        选型 TopK-SAE变体
+          每个嵌入选取Top-k个激活特征 k=256最优
+          双目标损失 重建误差 + 稀疏惩罚λΩ
+          对比多种SAE变体后选定TopK-SAE
+        训练数据 84860条文档 含原始与推理增强嵌入
+        多视角聚合 跨多个文档视角汇总特征重叠
+        输出 带自然语言描述的可解释稀疏特征
+    评估指标体系
+      重建误差 原始与重建嵌入的MSE 越低越好
+      单语义性 Mono-Semanticity LLM入侵者检测准确率 越高特征越连贯
+      检索保留率 重建嵌入上的NDCG@10 验证机制保留检索效果
+    七个评估基准
+      BRIGHT
+      NQ Natural Questions
+      MuTual
+      TREC-NEWS
+      Signal-1M
+      Robust04
+      ArguAna
+    因果验证实验
+      特征删除实验
+        删除Xetrieval识别的关键特征 相关性分数大幅下降
+        证明特征具有真实因果效力 非事后编造
+      特征放大实验
+        放大关键特征 平均NDCG@10提升3至5个点
+        压制关键特征 性能明显下降
+        验证特征系统具有真正因果控制力
+    与基线对比
+      vs 表面层解释 词汇匹配
+        Xetrieval在嵌入层解释 更深层
+      vs 事后生成理由
+        Xetrieval特征经因果干预验证 可信度更高
+      干预效果强于所有基线方法
+    技术创新点
+      单次前向传播实现CoT推理近似 避免生成延迟
+      TopK-SAE稀疏性确保可解释性与检索保真度平衡
+      多视角聚合提高特征鲁棒性
+      因果干预双重验证框架 删除加放大
+```
