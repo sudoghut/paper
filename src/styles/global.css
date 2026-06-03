@@ -445,6 +445,14 @@ main {
   user-select: none;
 }
 
+/* Disable text selection during pan/zoom interactions */
+.markmap-wrapper,
+.markmap-wrapper svg,
+.markmap-wrapper text {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* Override markmap's default node font to match site */
 .markmap-node text {
   font-family: var(--font-sans) !important;
