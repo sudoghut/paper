@@ -1,15 +1,64 @@
+# Huggingface Paper Review
+
+In-depth, beginner-friendly AI paper summaries in Chinese, continuously updated with top-voted papers from [HuggingFace Papers](https://huggingface.co/papers).
+
+**Website:** https://paper.oopus.info
+
+## Features
+
+- **Deep Chinese summaries** — each paper covers background, method, experiments, and significance; no jargon dumping
+- **Interactive mind maps** — each paper includes a markmap mind map; Ctrl/⌘+scroll to zoom and drag to pan on desktop; two-finger pinch/pan on mobile
+- **Math formulas** — rendered with KaTeX
+- **Static site** — built with Astro; no database required
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Adding a Paper
+
+Create a new Markdown file under `src/content/papers/` following the existing format:
+
+```yaml
+---
+title: "论文综述：..."        # required
+originalTitle: "..."          # required
+originalUrl: "https://arxiv.org/abs/..."  # required
+authors: "..."                # required
+publishDate: "YYYY-MM-DD"     # required
+reviewDate: "YYYY-MM-DD"      # required
+institution: "..."            # optional
+hfVotes: 100                  # optional
+tags: ["tag1", "tag2"]        # optional, defaults to []
+description: "一句话摘要"     # optional
+---
+```
+
+Mind maps are written as Mermaid `mindmap` code blocks in the body. The browser converts them to interactive markmaps at runtime via a custom script in `PaperLayout.astro` (not a standard Mermaid renderer).
+
+## Tech Stack
+
+- [Astro](https://astro.build) — static site framework
+- [markmap](https://markmap.js.org) — interactive mind map rendering
+- [KaTeX](https://katex.org) — math formula rendering
+
+---
+
 # Huggingface Paper 论文综述
 
-面向初学者的 AI 论文中文详细综述，持续收录 HuggingFace 高票论文。
+面向初学者的 AI 论文中文详细综述，持续收录 [HuggingFace Papers](https://huggingface.co/papers) 高票论文。
 
 **网站地址：** https://paper.oopus.info
 
 ## 特性
 
 - **中文深度解读** — 每篇论文都包含背景、方法、实验、意义的完整讲解，避免术语堆砌
-- **思维导图** — 每篇论文附带交互式思维导图（markmap），快速把握结构；Ctrl+滚轮缩放，双指触控缩放
+- **思维导图** — 每篇论文附带交互式思维导图（markmap）；桌面端 Ctrl/⌘+滚轮缩放、拖拽平移，移动端双指缩放/平移
 - **数学公式** — 使用 KaTeX 渲染，公式清晰可读
-- **无构建依赖** — 静态站点，由 Astro 生成，无需数据库
+- **静态站点** — 由 Astro 生成，无需数据库
 
 ## 本地运行
 
@@ -37,7 +86,7 @@ description: "一句话摘要"     # 可选
 ---
 ```
 
-思维导图用 mermaid mindmap 语法（缩进树形结构）写在正文的代码块中，浏览器加载时由自定义脚本（`PaperLayout.astro`）解析并转换为交互式 markmap 渲染（非标准 Mermaid 渲染器）。
+思维导图用 mermaid mindmap 语法（缩进树形结构）写在正文的代码块中，浏览器加载时由自定义脚本（`PaperLayout.astro`）在客户端解析并转换为交互式 markmap 渲染（非标准 Mermaid 渲染器）。
 
 ## 技术栈
 

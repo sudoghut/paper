@@ -77,9 +77,13 @@ const base = import.meta.env.BASE_URL;
       var wrapper = document.createElement('div');
       wrapper.className = 'markmap-wrapper';
 
+      var isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
       var hint = document.createElement('p');
       hint.className = 'markmap-hint';
-      hint.textContent = 'Ctrl + 滚轮缩放 · 拖拽平移 · 双指缩放 · 点击节点折叠/展开';
+      hint.textContent = isMobile
+        ? '双指缩放/平移 · 点击节点折叠/展开'
+        : 'Ctrl / ⌘ + 滚轮缩放 · 拖拽平移 · 点击节点折叠/展开';
       wrapper.appendChild(hint);
 
       var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -132,7 +136,7 @@ const base = import.meta.env.BASE_URL;
       wrapper.addEventListener('wheel', function (e) {
         if (!e.ctrlKey && !e.metaKey) {
           e.stopImmediatePropagation();
-          showOverlay('按住 Ctrl 并滚动以缩放');
+          showOverlay('按住 Ctrl / ⌘ 并滚动以缩放');
         }
       }, { capture: true, passive: true });
 
@@ -140,7 +144,7 @@ const base = import.meta.env.BASE_URL;
       // scroll the page on single-touch without JavaScript intervention.
       // This passive listener only shows the hint.
       wrapper.addEventListener('touchstart', function (e) {
-        if (e.touches.length === 1) showOverlay('双指操作可缩放思维导图');
+        if (e.touches.length === 1) showOverlay('双指可缩放和平移思维导图');
       }, { passive: true });
 
       // markmap-view registers handlePan on the SVG for every wheel event when

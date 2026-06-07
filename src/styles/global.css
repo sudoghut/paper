@@ -51,7 +51,7 @@ body {
   max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 1.5rem;
 }
 
@@ -497,6 +497,13 @@ main {
 .markmap-wrapper text {
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Allow browser to handle single-touch page scroll on mobile.
+   !important is required to override the inline touch-action:none that
+   d3-zoom sets via selection.style() after markmap initialises. */
+.markmap-wrapper svg {
+  touch-action: pan-x pan-y !important;
 }
 
 /* Override markmap's default node font to match site */
