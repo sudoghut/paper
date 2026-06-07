@@ -72,6 +72,29 @@ body {
   font-size: 0.85rem;
   color: var(--color-text-light);
   font-family: var(--font-sans);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-github-link {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  color: var(--color-text-light);
+  text-decoration: none;
+  transition: color 0.15s;
+  flex-shrink: 0;
+  /* 44px minimum touch target */
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+.site-github-link:hover {
+  color: var(--color-text);
 }
 
 main {
@@ -487,4 +510,6 @@ main {
   html { font-size: 16px; }
   :root { --content-padding: 1rem; }
   .paper-title { font-size: 1.25rem; }
+  /* Hide subtitle on narrow screens so title + GitHub icon fit on one line */
+  .site-subtitle { display: none; }
 }
