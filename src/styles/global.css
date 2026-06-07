@@ -445,6 +445,29 @@ main {
   user-select: none;
 }
 
+/* Floating gesture hint — shown when user scrolls/taps incorrectly */
+.markmap-overlay-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  white-space: nowrap;
+  z-index: 10;
+  letter-spacing: 0.03em;
+}
+.markmap-overlay-hint.visible {
+  opacity: 1;
+}
+
 /* Disable text selection during pan/zoom interactions */
 .markmap-wrapper,
 .markmap-wrapper svg,

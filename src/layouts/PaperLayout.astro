@@ -79,13 +79,18 @@ const base = import.meta.env.BASE_URL;
 
       var hint = document.createElement('p');
       hint.className = 'markmap-hint';
-      hint.textContent = '滚轮缩放 · 拖拽平移 · 点击节点折叠 / 展开';
+      hint.textContent = 'Ctrl + 滚轮缩放 · 拖拽平移 · 双指缩放 · 点击节点折叠/展开';
       wrapper.appendChild(hint);
 
       var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.style.width = '100%';
       svg.style.height = '680px';
       wrapper.appendChild(svg);
+
+      // Floating hint overlay — shown when user uses wrong gesture
+      var overlay = document.createElement('div');
+      overlay.className = 'markmap-overlay-hint';
+      wrapper.appendChild(overlay);
 
       pre.replaceWith(wrapper);
 
@@ -99,6 +104,36 @@ const base = import.meta.env.BASE_URL;
         zoom: true,
         pan: true,
       }, result.root);
+
+      // Override d3-zoom filter: safety-net so the transform is only updated
+      // on Ctrl+wheel / two-finger pinch (belt-and-suspenders with the capture below).
+      mm.zoom.filter(function (event) {
+        if (event.type === 'wheel') return event.ctrlKey || event.metaKey;
+        if (event.type === 'touchstart') return event.touches.length > 1;
+        return !event.button;
+      });
+
+      // Show / auto-hide the floating hint
+      var hideTimer;
+      function showOverlay(msg) {
+        clearTimeout(hideTimer);
+        overlay.textContent = msg;
+        overlay.classList.add('visible');
+        hideTimer = setTimeout(function () { overlay.classList.remove('visible'); }, 1800);
+      }
+
+      // d3-zoom's wheeled() and touchstarted() both call filter.apply() before
+      // calling noevent()/nopropagation(), and touchmoved() guards on this.__zooming
+      // (which is only set when touchstarted ran successfully).  So zoom.filter()
+      // alone is sufficient to prevent preventDefault — no capture interception needed.
+      // These passive listeners are only for showing the hint overlay.
+      wrapper.addEventListener('wheel', function (e) {
+        if (!e.ctrlKey && !e.metaKey) showOverlay('按住 Ctrl 并滚动以缩放');
+      }, { passive: true });
+
+      wrapper.addEventListener('touchstart', function (e) {
+        if (e.touches.length === 1) showOverlay('双指操作可缩放思维导图');
+      }, { passive: true });
 
       // Slight delay so the SVG is laid out before fit()
       setTimeout(function () { mm.fit(); }, 50);
