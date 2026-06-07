@@ -143,6 +143,12 @@ const base = import.meta.env.BASE_URL;
         if (e.touches.length === 1) showOverlay('双指操作可缩放思维导图');
       }, { passive: true });
 
+      // markmap-view registers handlePan on the SVG for every wheel event when
+      // pan:true.  handlePan translates the mindmap by deltaX/deltaY and calls
+      // preventDefault(), which blocks page scroll.  Remove it so plain wheel
+      // scrolls the page; mouse-drag panning (d3-zoom mousemoved) is unaffected.
+      mm.svg.on('wheel', null);
+
       // Override d3-zoom's inline touch-action:none with inline !important so
       // single-touch scroll passes through to the page on mobile.  Must be inline
       // !important to beat d3-zoom's plain inline style set during initialisation.
