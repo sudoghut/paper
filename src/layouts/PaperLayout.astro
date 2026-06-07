@@ -122,18 +122,31 @@ const base = import.meta.env.BASE_URL;
         hideTimer = setTimeout(function () { overlay.classList.remove('visible'); }, 1800);
       }
 
-      // d3-zoom's wheeled() and touchstarted() both call filter.apply() before
-      // calling noevent()/nopropagation(), and touchmoved() guards on this.__zooming
-      // (which is only set when touchstarted ran successfully).  So zoom.filter()
-      // alone is sufficient to prevent preventDefault — no capture interception needed.
-      // These passive listeners are only for showing the hint overlay.
+      // Show / auto-hide the floating hint
+      // Capture on PARENT (wrapper) so our listener runs in the capture phase,
+      // before the SVG and any of its listeners (including d3-zoom's non-passive
+      // wheel handler).  stopImmediatePropagation() prevents the SVG from receiving
+      // the event at all — this blocks both d3-zoom and any browser SVG-scroll
+      // container behaviour.  passive:true tells the browser it may scroll the
+      // page immediately without waiting for this listener to finish.
       wrapper.addEventListener('wheel', function (e) {
-        if (!e.ctrlKey && !e.metaKey) showOverlay('按住 Ctrl 并滚动以缩放');
-      }, { passive: true });
+        if (!e.ctrlKey && !e.metaKey) {
+          e.stopImmediatePropagation();
+          showOverlay('按住 Ctrl 并滚动以缩放');
+        }
+      }, { capture: true, passive: true });
 
+      // touch-action:pan-x pan-y on the SVG (set in CSS) allows the browser to
+      // scroll the page on single-touch without JavaScript intervention.
+      // This passive listener only shows the hint.
       wrapper.addEventListener('touchstart', function (e) {
         if (e.touches.length === 1) showOverlay('双指操作可缩放思维导图');
       }, { passive: true });
+
+      // Override d3-zoom's inline touch-action:none with inline !important so
+      // single-touch scroll passes through to the page on mobile.  Must be inline
+      // !important to beat d3-zoom's plain inline style set during initialisation.
+      svg.style.setProperty('touch-action', 'pan-x pan-y', 'important');
 
       // Slight delay so the SVG is laid out before fit()
       setTimeout(function () { mm.fit(); }, 50);
