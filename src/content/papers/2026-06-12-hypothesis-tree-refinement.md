@@ -80,7 +80,7 @@ Arbor 面向的是"需要长时间反复实验才能优化"的开放式科研工
 - **数据合成**：自动设计搜索智能体训练数据、数学推理（AIME 风格）题目生成管线。
 - **机器学习工程竞赛**：MLE-Bench Lite 中的端到端 Kaggle 式建模任务。
 
-已落地方面，作者团队已开源完整系统：提供命令行工具（CLI）、代码与文档，发布在 GitHub（https://github.com/RUC-NLPIR/Arbor）并配有项目主页（https://ruc-nlpir.github.io/Arbor/），定位为可直接使用的实用系统而非单纯的研究演示。
+已落地方面，作者团队已开源完整系统：提供命令行工具（CLI）、代码与文档，发布在 [GitHub](https://github.com/RUC-NLPIR/Arbor) 并配有[项目主页](https://ruc-nlpir.github.io/Arbor/)，定位为可直接使用的实用系统而非单纯的研究演示。
 
 ## 六、网络上的讨论与评价
 
