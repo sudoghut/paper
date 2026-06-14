@@ -1,8 +1,10 @@
 # Huggingface Paper Review
 
-In-depth, beginner-friendly AI paper summaries in Chinese, continuously updated with top-voted papers from [HuggingFace Papers](https://huggingface.co/papers).
+In-depth, beginner-friendly AI paper summaries in Chinese, curated from [HuggingFace Papers](https://huggingface.co/papers) based on personal reading interests.
 
 **Website:** https://paper.oopus.info
+
+**Note:** This is a personal reading selection — papers are chosen based on the author's interests, so image and multimodal papers are collected less frequently. Updated occasionally from daily papers and at least once a week from weekly papers.
 
 ## Features
 
@@ -49,9 +51,11 @@ Mind maps are written as Mermaid `mindmap` code blocks in the body. The browser 
 
 # Huggingface Paper 论文综述
 
-面向初学者的 AI 论文中文详细综述，持续收录 [HuggingFace Papers](https://huggingface.co/papers) 高票论文。
+面向初学者的 AI 论文中文详细综述，从 [HuggingFace Papers](https://huggingface.co/papers) 按个人阅读兴趣精选收录。
 
 **网站地址：** https://paper.oopus.info
+
+**说明：** 这是个人阅读 HuggingFace Papers 的文选，收录篇目以个人兴趣为准，因此图像、多模态相关论文收录较少。更新频率：daily papers 不定期更新，weekly papers 至少每周更新一次。
 
 ## 特性
 
