@@ -110,7 +110,7 @@ $$r_{k}=\left(\frac{1}{M}\sum_{m=1}^{M}v_{k,m}\right)^{M}$$
 
 - **正面**：[VentureBeat](https://venturebeat.com/technology/why-weibos-tiny-vibethinker-3b-has-the-ai-world-arguing-over-benchmarks-again) 等媒体惊叹一个 3B 模型竟能在 AIME26 上追平 671B 的 DeepSeek V3.2、超过 Gemini 3 Pro（91.7）。[36氪](https://eu.36kr.com/en/p/3857190890378249) 以「3B 小模型在编程上媲美 Opus 4.5」为题报道。知名 AI 教育者 [Sebastian Raschka](https://sebastianraschka.com/blog/2026/vibethinker-3b-post-training.html) 评价说，这「清楚展示了优秀的数据筛选与后训练能带来多大收益」。
 - **质疑（benchmark 之争）**：核心争论在于**分数是作者自测、未经独立第三方复现**。同一个模型在同一测试上，分数会因 prompt 格式、采样次数、token 预算、是否开启测试时扩展而浮动好几分——CLR 把 AIME26 从 94.3 抬到 97.1，被指代表两种完全不同的部署成本场景，不能混为一谈。
-- **泛化性争议**：GPQA-Diamond 仅 70.2，说明它是**「可验证推理专才」而非通用模型**。批评者提醒：竞赛数学/编程上的高分，未必能推广到更广的通用能力。
+- **泛化性争议**：GPQA-Diamond 仅 70.2，说明它是「**可验证推理专才**」而非通用模型。批评者提醒：竞赛数学/编程上的高分，未必能推广到更广的通用能力。
 - 综合来看，社区共识大致是：方法（数据 + 后训练 + 测试时扩展）确实漂亮且高效，但「3B 媲美万亿模型」的标题应理解为「在特定可验证任务上」，需保持谨慎。
 
 > 注：本文 HuggingFace 论文页的具体投票数暂未查到准确数字（frontmatter 中暂记为 0）。
