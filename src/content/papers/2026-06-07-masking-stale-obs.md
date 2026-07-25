@@ -35,7 +35,7 @@ description: "系统研究「遮盖过时观测」对搜索Agent的效果，发�
 
 ## 三、使用了哪些模型和计算资源？
 
-模型范围（4B→284B）：Qwen3.5-9B（~9B）、Qwen3.5/3.6-35B-A3B（~35B，MoE激活3B）、GPT-OSS-20B/120B（MoE，5.1B激活/token）、NVIDIA Nemotron 3（30B-A3B变体，混合Mamba-Transformer MoE）、DeepSeek-V4-Flash（284B总参数/13B激活，代表"饱和"强模型）。
+模型范围（4B→284B）：Qwen3.5-9B（约9B）、Qwen3.5/3.6-35B-A3B（约35B，MoE激活3B）、GPT-OSS-20B/120B（MoE，5.1B激活/token）、NVIDIA Nemotron 3（30B-A3B变体，混合Mamba-Transformer MoE）、DeepSeek-V4-Flash（284B总参数/13B激活，代表"饱和"强模型）。
 
 离线基准（BrowseComp-Plus，本地BM25）：单节点 8× A100 80GB，CUDA 12.2+，Ubuntu 22.04。在线基准（GAIA/xbench/BrowseComp-ZH）：依赖 Serper API。
 
